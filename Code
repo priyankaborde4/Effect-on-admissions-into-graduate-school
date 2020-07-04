@@ -1,0 +1,58 @@
+import pandas as pd
+
+### importing necessary  packages:
+import numpy as np
+import seaborn as sb
+import matplotlib.pyplot as plt
+import math
+## reading sourse file:
+School_Admission = pd.read_csv("School.csv")
+print(School_Admission)
+
+## Analysing Data
+print("# of Studunts:" + str(len(School_Admission.index)))
+
+### Students from TOPNOTCH college got into graduate school
+sb.countplot(x="ADMIT", data = School_Admission, hue= "TOPNOTCH")
+
+## plotting histogram for GRE and GPA:
+School_Admission["GRE"].plot.hist()
+School_Admission["GPA"].plot.hist()
+
+### Cheking and visualizing  Null Values:
+School_Admission.isnull().sum()
+sb.heatmap(School_Admission.isnull(),yticklabels = False, cmap = "viridis")
+
+#### Relationship between ADMIT & GRE, GPA
+sb.boxplot(x = "ADMIT", y = "GRE", data =School_Admission )
+sb.boxplot(x = "ADMIT", y = "GPA", data =School_Admission )
+
+#### Calculate Mean Value and Imputing for Null values in GRE and GPA columns:
+meanValue_GPA = School_Admission['GPA'].mean()
+meanValue_GRE = School_Admission['GRE'].mean()
+print("GPA Mean Value:", meanValue_GPA)
+print("GRE Mean Value:", meanValue_GRE)
+
+School_Admission['GPA']=School_Admission['GPA'].fillna(meanValue_GPA)
+School_Admission['GRE']=School_Admission['GRE'].fillna(meanValue_GRE)
+School_Admission
+
+##Defining dependant and independant variables:
+x = School_Admission.drop("ADMIT", axis = 1)
+y = School_Admission["ADMIT"]
+
+##Training the data with 70-30
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.3,random_state=2)
+
+from sklearn.linear_model import LogisticRegression
+logmodel=LogisticRegression()
+logmodel.fit(x_train, y_train)
+
+predictions = logmodel.predict(x_test)
+from sklearn.metrics import classification_report
+classification_report(y_test, predictions)
+
+##Confusion Matrix
+from sklearn.metrics import confusion_matrix
+confusion_matrix (y_test, predictions)
