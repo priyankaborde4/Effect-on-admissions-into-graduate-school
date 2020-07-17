@@ -5,7 +5,7 @@ import pandas as pd
 import seaborn as sb
 import matplotlib.pyplot as plt
 import math
-## reading sourse file:
+## reading source file:
 School_Admission = pd.read_csv("School.csv")
 print(School_Admission)
 
